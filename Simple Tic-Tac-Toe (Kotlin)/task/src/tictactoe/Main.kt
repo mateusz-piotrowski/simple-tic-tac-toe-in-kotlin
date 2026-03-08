@@ -2,54 +2,71 @@ package tictactoe
 
 fun main() {
     val input = readLine()!!
-    printGrid(input)
-    analyzeGame(input)
+    val grid = Array(3) { CharArray(3) }
+    var index = 0
+
+    // Read exactly 9 chars from first line only
+    for (i in input.indices.take(9)) {
+        val row = i / 3
+        val col = i % 3
+        grid[row][col] = input[i]
+    }
+
+    // Print initial grid
+    printGrid(grid)
+
+    // Get valid move from user (now reads from remaining input)
+    var row: Int
+    var col: Int
+
+    while (true) {
+        println("Enter the coordinates:")
+        val inputLine = readLine()!!.trim().split(" ")
+
+        // Check if exactly 2 inputs
+        if (inputLine.size != 2) {
+            println("You should enter numbers!")
+            continue
+        }
+
+        // Check if both are numbers
+        try {
+            row = inputLine[0].toInt() - 1  // Convert to 0-based index
+            col = inputLine[1].toInt() - 1  // Convert to 0-based index
+        } catch (e: NumberFormatException) {
+            println("You should enter numbers!")
+            continue
+        }
+
+        // Check if coordinates are in range 1-3
+        if (row !in 0..2 || col !in 0..2) {
+            println("Coordinates should be from 1 to 3!")
+            continue
+        }
+
+        // Check if cell is occupied
+        if (grid[row][col] != '_') {
+            println("This cell is occupied! Choose another one!")
+            continue
+        }
+
+        // Valid move found
+        grid[row][col] = 'X'
+        break
+    }
+
+    // Print updated grid
+    printGrid(grid)
 }
 
-fun printGrid(grid: String) {
+fun printGrid(grid: Array<CharArray>) {
     println("---------")
-    for (i in 0 until 3) {
-        println(" | ${grid[i*3]} ${grid[i*3+1]} ${grid[i*3+2]} |")
+    for (row in grid) {
+        print("| ")
+        for (cell in row) {
+            print("$cell ")
+        }
+        println("|")
     }
     println("---------")
-}
-
-fun analyzeGame(grid: String): String {
-    val xCount = grid.count { it == 'X' }
-    val oCount = grid.count { it == 'O' }
-
-    val xWins = hasThreeInRow(grid, 'X')
-    val oWins = hasThreeInRow(grid, 'O')
-
-    // Impossible cases
-    if (xWins && oWins) return "Impossible"
-    if (Math.abs(xCount - oCount) > 1) return "Impossible"
-
-    // Win cases
-    if (xWins) return "X wins"
-    if (oWins) return "O wins"
-
-    // Draw or not finished
-    val emptyCount = grid.count { it == '_' || it == ' ' }
-    return if (emptyCount == 0) "Draw" else "Game not finished"
-}
-
-fun hasThreeInRow(grid: String, player: Char): Boolean {
-    // Rows
-    for (i in 0 until 3) {
-        if (grid[i*3] == player && grid[i*3+1] == player && grid[i*3+2] == player)
-            return true
-    }
-
-    // Columns
-    for (i in 0 until 3) {
-        if (grid[i] == player && grid[i+3] == player && grid[i+6] == player)
-            return true
-    }
-
-    // Diagonals
-    if (grid[0] == player && grid[4] == player && grid[8] == player) return true
-    if (grid[2] == player && grid[4] == player && grid[6] == player) return true
-
-    return false
 }

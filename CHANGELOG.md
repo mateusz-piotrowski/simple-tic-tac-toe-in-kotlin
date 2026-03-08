@@ -1,5 +1,11 @@
 # The Changelog
 
+## [0.0.6] (March 8, 2026)
+
+**Added:**
+
+- Task 4 solution
+
 ## [0.0.5] (March 07, 2026)
 
 **Added:**
